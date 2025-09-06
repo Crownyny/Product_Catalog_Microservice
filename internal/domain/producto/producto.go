@@ -20,6 +20,8 @@ type ProductoAgroecologico struct {
     Imagen           Imagen
     ProductorID      string // referencia por identidad al productor
     publicadoEn      time.Time
+
+	eventsPending    []interface{}
 }
 
 // Constructor del agregado
@@ -42,7 +44,7 @@ func NewProductoAgroecologico(
         Value: Disponible, 
     }
 
-    return &ProductoAgroecologico{
+    producto := &ProductoAgroecologico{
         ID:             id,
         Nombre:         nombre,
         Descripcion:    desc,
@@ -54,24 +56,45 @@ func NewProductoAgroecologico(
         Imagen:         imagen,
         ProductorID:    productorID,
         publicadoEn:    time.Now(),
-    }, nil
+        eventsPending:  make([]interface{}, 0),
+    }
+    
+    // Generar evento de producto publicado
+    producto.addEvent(ProductoPublicado{
+        ProductoID: id,
+        At:         time.Now(),
+    })
+    
+    return producto, nil
 }
 
-// Solo puede marcarse como "Excedente" si ya salió de temporada
 func (p *ProductoAgroecologico) MarcarComoExcedente(now time.Time) error {
     if p.Temporada.IsInSeason(now) {
         return errors.New("no se puede marcar como 'Excedente' dentro de la temporada")
     }
     p.Estado = EstadoDisponibilidad{Value: Excedente}
+    
+    // Generar evento
+    p.addEvent(ProductoMarcadoComoExcedente{
+        ProductoID: p.ID,
+        At:         now,
+    })
+    
     return nil
 }
 
-// Se puede agotar manualmente si está disponible
 func (p *ProductoAgroecologico) Agotar() error {
     if p.Estado.Value != Disponible {
         return errors.New("solo un producto 'Disponible' puede marcarse como 'Agotado'")
     }
     p.Estado = EstadoDisponibilidad{Value: Agotado}
+    
+    // Generar evento
+    p.addEvent(ProductoAgotado{
+        ProductoID: p.ID,
+        At:         time.Now(),
+    })
+    
     return nil
 }
 
@@ -94,4 +117,17 @@ func (p *ProductoAgroecologico) ActualizarInformacion(nombre NombreProducto, des
     p.Descripcion = desc
     p.Imagen = imagen
     return nil
+}
+
+// Métodos para manejar eventos
+func (p *ProductoAgroecologico) addEvent(event interface{}) {
+    p.eventsPending = append(p.eventsPending, event)
+}
+
+func (p *ProductoAgroecologico) GetPendingEvents() []interface{} {
+    return p.eventsPending
+}
+
+func (p *ProductoAgroecologico) ClearEvents() {
+    p.eventsPending = make([]interface{}, 0)
 }
