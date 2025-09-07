@@ -13,10 +13,13 @@ type ProductorRepository struct {
 	productores map[productor.ProductorID]*productor.Productor
 }
 
+
 func NewProductorRepository() *ProductorRepository {
-	return &ProductorRepository{
-		productores: make(map[productor.ProductorID]*productor.Productor),
-	}
+    repo := &ProductorRepository{
+        productores: make(map[productor.ProductorID]*productor.Productor),
+    }
+    loadProductores(repo)
+    return repo
 }
 
 func (pr *ProductorRepository) Save(pro *productor.Productor) error {
@@ -145,4 +148,28 @@ func (pr *ProductorRepository) UpdateEstadoVerificacion(id productor.ProductorID
 		return nil
 	}
 	return fmt.Errorf("No se encontró el productor con id %s", id)
+}
+
+func loadProductores(repo *ProductorRepository) {
+    nombre1, _ := productor.NewNombreProducto("Juan Pérez")
+    ubicacion1, _ := productor.NewUbicacion("Vereda El Paraíso", "Finca La Esperanza")
+    reputacion1, _ := productor.NuevaReputacion(4.5)
+    practicas1, _ := productor.NuevaPracticasDeCultivo("Rotación de cultivos y abonos orgánicos")
+    estadoVerif1, _ := productor.NewEstadoVerificacion(productor.Verificado)
+    estadoAct1, _ := productor.NewEstadoActividad(productor.Activo)
+    prod1, _ := productor.NewProductor(
+        "quemado-1", nombre1, ubicacion1, estadoVerif1, estadoAct1, reputacion1, practicas1,
+    )
+    repo.Save(prod1)
+
+    nombre2, _ := productor.NewNombreProducto("Maria Gómez")
+    ubicacion2, _ := productor.NewUbicacion("Vereda La Pradera", "Finca El Sol")
+    reputacion2, _ := productor.NuevaReputacion(3.8)
+    practicas2, _ := productor.NuevaPracticasDeCultivo("Uso mínimo de pesticidas")
+    estadoVerif2, _ := productor.NewEstadoVerificacion(productor.Verificado)
+    estadoAct2, _ := productor.NewEstadoActividad(productor.Activo)
+    prod2, _ := productor.NewProductor(
+        "quemado-2", nombre2, ubicacion2, estadoVerif2, estadoAct2, reputacion2, practicas2,
+    )
+    repo.Save(prod2)
 }

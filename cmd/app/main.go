@@ -7,6 +7,7 @@ import (
 	"Product_Catalog_Microservice/internal/domain/service"
 	"Product_Catalog_Microservice/internal/handlers"
 	"Product_Catalog_Microservice/internal/repository"
+	
 
 	// Importa los paquetes de dominio para los tipos
 	"Product_Catalog_Microservice/internal/domain/producto"
@@ -34,6 +35,14 @@ func main() {
 	productoRepo = repository.NewProductoRepository()
 	productorRepo = repository.NewProductorRepository()
 
+	 
+  // Imprimir los IDs de los productores guardados
+    if all, err := productorRepo.GetAll(); err == nil {
+        log.Println("Productores cargados por defecto:")
+        for _, prod := range all {
+            log.Printf("ID: %s, Nombre: %s\n", prod.ID, prod.Nombre.Value)
+        }
+    }
 	eventPublisher := &DummyEventPublisher{}
 
 	catalogoService := service.NewCatalogoService(productorRepo, productoRepo, eventPublisher)
