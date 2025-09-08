@@ -49,10 +49,10 @@ func main() {
 	r := gin.Default()
 
 	// Endpoints
-	r.POST("/productos/publicar", productoHandler.PublicarProducto)
-	r.POST("/productos/excedente", productoHandler.MarcarProductoComoExcedente)
-	r.PUT("/productos/disponibilidad", productoHandler.ActualizarDisponibilidadPorTemporada)
-  	r.GET("/catalogo/completo", productoHandler.GetCatalogoCompleto)
+	r.POST("catalogo/producto", productoHandler.PublicarProducto)
+	r.POST("catalogo/productos/excedente", productoHandler.MarcarProductoComoExcedente)
+	r.PUT("catalogo/productos/disponibilidad", productoHandler.ActualizarDisponibilidadPorTemporada)
+  	r.GET("catalogo/completo", productoHandler.GetCatalogoCompleto)
 	// Iniciar servidor
 	log.Println("Servidor iniciado en :8080")
 	r.Run(":8080")
