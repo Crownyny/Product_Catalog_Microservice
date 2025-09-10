@@ -178,8 +178,6 @@ Añade aquí a los integrantes del equipo (reemplaza los placeholders):
 - Esteban Santiago Escandon Causaya (@santiago1scan) — Desarrollador / estebanescandon@unicauca.edu.co
 - Miguel Angel Calambas Vivas (@maxskaink) — Desarrollador / mangelcvivas@unicauca.edu.co
 
-Sugerencia: incluye a `@Crownyny` (owner del repo) y demás colaboradores.
-
 ## Próximos pasos
 
 - Persistencia real (base de datos) y repositorios concretos.
